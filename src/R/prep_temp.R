@@ -17,28 +17,31 @@ year_seq <- year(date_seq)
 
 
 # Create raster stack of monthly mean
-monthly_tmmx_files <- list.files(file.path("data", "climate/tmmx","monthly_mean"),
+monthly_tmmx_files <- list.files(file.path(climate_crt, "tmmx","monthly_mean"),
                                  pattern = ".tif", full.names = TRUE)
 tmmx_mean <- stack(monthly_tmmx_files)
 
-monthly_tmmn_files <- list.files(file.path("data", "climate/tmmn","monthly_mean"),
+monthly_tmmn_files <- list.files(file.path(climate_crt, "tmmn","monthly_mean"),
                                  pattern = ".tif", full.names = TRUE)
 
 tmmn_mean <- stack(monthly_tmmn_files)
 tmean <- overlay(x = tmmx_mean, y = tmmn_mean, fun = mean_fun)
-
+idx = seq(as.Date("1979-01-15"), as.Date("2016-12-15'"), by = "month")
+tmean = setZ(tmean, idx, 'months')
+names(tmean) <- paste(year(date_seq), month(date_seq),
+                             day(date_seq), sep = "-")
 # Monthly average tmean
 year <- 1979:2016
 for(i in year){
-  r_sub <- subset(tmean_c,  grep(i, names(tmean_c))) # subset based on year
+  r_sub <- subset(tmean,  grep(i, names(tmean))) # subset based on year
   # Write out the monthly anomalies by year
-  if(!file.exists(file.path(prefix, "climate", paste0("tmean/monthly_mean/tmean_", i, "_mean.tif")))){
-    writeRaster(r_sub, filename = file.path(prefix, "climate", paste0("tmean/monthly_mean/tmean_", i, "_mean.tif")),
+  if(!file.exists(file.path(tmean_mnth, "tmean_", i, "_mean.tif"))){
+    writeRaster(r_sub, filename = file.path(tmean_mnth, "tmean_", i, "_mean.tif"),
                 format = "GTiff") }
 }
 
 # For import after the monthly mean creation - this is so we do not have to recalculate means everytime.
-tmean_list <- list.files(file.path("data", "climate/tmean","monthly_mean"),
+tmean_list <- list.files(file.path(climate_crt, "tmean","monthly_mean"),
                          pattern = ".tif", full.names = TRUE)
 tmean <- stack(tmean_list)
 

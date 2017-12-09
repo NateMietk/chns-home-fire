@@ -1,12 +1,3 @@
-# Libraries ---------------------------------------------------------------
-x <- c("data.table", "tidyverse", "tidyverse", "magrittr", "sf", "gridExtra",
-       "assertthat", "purrr", "httr", "rvest", "lubridate", "parallel")
-lapply(x, library, character.only = TRUE, verbose = FALSE)
-
-# Load helper functions for external script
-source("src/R/store_data")
-source("src/R/get_data.R")
-source("src/R/functions/st_par.R")
 
 ncores <- 2
 
